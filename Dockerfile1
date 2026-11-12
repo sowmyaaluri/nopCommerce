@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
+ADD . /APPNOP
+WORKDIR /APPNOP/src
+RUN dotnet publish Presentation/Nop.Web/Nop.Web.csproj -c Release -o /app --no-build
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS runtime
+COPY --from=build /app /devops
+WORKDIR /devops
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "Nop.Web.dll"]
